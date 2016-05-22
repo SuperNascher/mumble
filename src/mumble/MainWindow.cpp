@@ -168,6 +168,14 @@ MainWindow::MainWindow(QWidget *p) : QMainWindow(p) {
 #endif
 }
 
+void MainWindow::copyImagetoClipboard() {
+	QClipboard *clipboard = QApplication::clipboard();
+	QString resName = qtcSaveImageCursor.charFormat().toImageFormat().name();
+	QVariant res = qteLog->document()->resource(QTextDocument::ImageResource, resName);
+	QImage img = res.value<QImage>();
+	clipboard->setImage(img);
+}
+
 void MainWindow::createActions() {
 	int idx = 1;
 	gsPushTalk=new GlobalShortcut(this, idx++, tr("Push-to-Talk", "Global Shortcut"), false);
@@ -662,6 +670,7 @@ void MainWindow::on_qteLog_customContextMenuRequested(const QPoint &mpos) {
 	}
 	if (cursor.charFormat().isImageFormat()) {
 		menu->addSeparator();
+        	menu->addAction(tr("Copy Image"), this, SLOT(copyImageToClipboard(void)));
 		menu->addAction(tr("Save Image As..."), this, SLOT(saveImageAs(void)));
 
 		qtcSaveImageCursor = cursor;
