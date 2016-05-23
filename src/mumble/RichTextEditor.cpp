@@ -180,8 +180,9 @@ RichTextEditor::RichTextEditor(QWidget *p) : QTabWidget(p) {
 	qtbToolBar->addAction(qaLink);
 	qtbToolBar->addAction(qaImage);
 
-	connect(this, SIGNAL(currentChanged(int)), this, SLOT(onCurrentChanged(int)));
-	updateActions();
+    qteRichText->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(onCurrentChanged(int)));
+    updateActions();
 
 	qteRichText->setFocus();
 }
@@ -630,4 +631,73 @@ bool RichTextImage::isValidImage(const QByteArray &ba, QByteArray &fmt) {
 	}
 
 	return false;
+}
+
+void RichTextEditor::on_qteRichText_customContextMenuRequested(const QPoint &pos) {
+    QMenu *menu = qteRichText->createStandardContextMenu();
+    menu->addSeparator();
+
+    QTextCursor cursor = qteRichText->cursorForPosition(pos);
+    if (cursor.charFormat().isImageFormat()) {
+        menu->addSeparator();
+        menu->addAction(tr("Copy Image"), this, SLOT(copyImageToClipboard(void)));
+        menu->addAction(tr("Save Image As..."), this, SLOT(saveImageAs(void)));
+        qtcSaveImageCursor = cursor;
+    }
+    menu->exec(qteRichText->mapToGlobal(pos));
+    delete menu;
+}
+
+void RichTextEditor::copyImageToClipboard() {
+    QString resName = qtcSaveImageCursor.charFormat().toImageFormat().name();
+    QVariant res = qteRichText->document()->resource(QTextDocument::ImageResource, resName);
+    QImage img = res.value<QImage>();
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setImage(img);
+}
+
+void RichTextEditor::saveImageAs() {
+    QDateTime now = QDateTime::currentDateTime();
+    QString defaultFname = QString::fromLatin1("Mumble-%1.jpg").arg(now.toString(QString::fromLatin1("yyyy-MM-dd-HHmmss")));
+
+    //QString fname = QFileDialog::getSaveFileName(this, tr("Save Image File"), getImagePath(defaultFname), tr("Images (*.png *.jpg *.jpeg)"));
+    QString fname = QFileDialog::getSaveFileName(this, tr("Save Image File"), getImagePath(defaultFname), tr("Images (*.png *.jpg *.jpeg)"));
+    if (fname.isNull()) {
+        return;
+    }
+
+    QString resName = qtcSaveImageCursor.charFormat().toImageFormat().name();
+    QVariant res = qteRichText->document()->resource(QTextDocument::ImageResource, resName);
+    QImage img = res.value<QImage>();
+    bool ok = img.save(fname);
+    if (!ok) {
+        // In case fname did not contain a file extension, try saving with an
+        // explicit format.
+        ok = img.save(fname, "PNG");
+    }
+
+    updateImagePath(fname);
+
+    if (!ok) {
+        g.l->log(Log::Warning, tr("Could not save image: %1").arg(Qt::escape(fname)));
+    }
+}
+
+void RichTextEditor::updateImagePath(QString filepath) {
+    QFileInfo fi(filepath);
+    g.s.qsImagePath = fi.absolutePath();
+}
+
+QString RichTextEditor::getImagePath(QString filename) {
+    if (g.s.qsImagePath.isEmpty() || ! QDir(g.s.qsImagePath).exists()) {
+#if QT_VERSION >= 0x050000
+        g.s.qsImagePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+#else
+        g.s.qsImagePath = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
+#endif
+    }
+    if (filename.isEmpty()) {
+        return g.s.qsImagePath;
+    }
+    return g.s.qsImagePath + QDir::separator() + filename;
 }

@@ -53,11 +53,17 @@ class RichTextEditor : public QTabWidget, Ui::RichTextEditor {
 	public:
 		RichTextEditor(QWidget *p = NULL);
 		QString text();
+        QTextCursor qtcSaveImageCursor;
 		bool isModified() const;
+        static void updateImagePath(QString filepath);
+        static QString getImagePath(QString filname);
 	public slots:
+        void on_qteRichText_customContextMenuRequested(const QPoint &pos);
 		void setText(const QString &text, bool readonly = false);
 		void updateColor(const QColor &);
 		void updateActions();
+        void copyImageToClipboard();
+        void saveImageAs();
 	protected slots:
 		void on_qaBold_triggered(bool);
 		void on_qaItalic_triggered(bool);
@@ -67,7 +73,7 @@ class RichTextEditor : public QTabWidget, Ui::RichTextEditor {
 		void on_qaImage_triggered();
 
 		void on_qptePlainText_textChanged();
-		void on_qteRichText_textChanged();
+        void on_qteRichText_textChanged();
 		void on_qteRichText_cursorPositionChanged();
 		void on_qteRichText_currentCharFormatChanged();
 		void onCurrentChanged(int);
