@@ -1500,8 +1500,8 @@ void MainWindow::qmUser_aboutToShow() {
 		qaUserLocalMute->setEnabled(! self);
 		qaUserLocalVolume->setEnabled(! self);
 		qaUserLocalIgnore->setEnabled(! self);
-		qaUserCommentReset->setEnabled(! p->qbaCommentHash.isEmpty() && (g.pPermissions & (ChanACL::ResetComment | ChanACL::Write)));
-		qaUserTextureReset->setEnabled(! p->qbaTextureHash.isEmpty() && (g.pPermissions & (ChanACL::ResetTexture | ChanACL::Write)));
+		qaUserCommentReset->setEnabled(! p->qbaCommentHash.isEmpty() && (g.pPermissions & (ChanACL::ResetComment | ChanACL::MoveAndModifyCommentAndAvatar | ChanACL::Write)));
+		qaUserTextureReset->setEnabled(! p->qbaTextureHash.isEmpty() && (g.pPermissions & (ChanACL::ResetTexture | ChanACL::MoveAndModifyCommentAndAvatar | ChanACL::Write)));
 		qaUserCommentView->setEnabled(! p->qbaCommentHash.isEmpty());
 
 		qaUserMute->setChecked(p->bMute || p->bSuppress);

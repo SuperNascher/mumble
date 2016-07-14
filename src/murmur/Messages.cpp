@@ -511,12 +511,12 @@ void Server::msgUserState(ServerUser *uSource, MumbleProto::UserState &msg) {
 		if (!c || (c == pDstServerUser->cChannel))
 			return;
 
-		if ((uSource != pDstServerUser) && (! hasPermission(uSource, pDstServerUser->cChannel, ChanACL::Move))) {
+		if (((uSource != pDstServerUser) && (! hasPermission(uSource, pDstServerUser->cChannel, ChanACL::Move))) || ((uSource != pDstServerUser) && (! hasPermission(uSource, pDstServerUser->cChannel, ChanACL::MoveAndModifyCommentAndAvatar)))) {
 			PERM_DENIED(uSource, pDstServerUser->cChannel, ChanACL::Move);
 			return;
 		}
 
-		if (! hasPermission(uSource, c, ChanACL::Move) && ! hasPermission(pDstServerUser, c, ChanACL::Enter)) {
+		if ((! hasPermission(uSource, c, ChanACL::Move) && ! hasPermission(pDstServerUser, c, ChanACL::Enter)) || (! hasPermission(uSource, c, ChanACL::MoveAndModifyCommentAndAvatar) && ! hasPermission(pDstServerUser, c, ChanACL::Enter))) {
 			PERM_DENIED(pDstServerUser, c, ChanACL::Enter);
 			return;
 		}
@@ -547,8 +547,9 @@ void Server::msgUserState(ServerUser *uSource, MumbleProto::UserState &msg) {
 		bool changed = false;
 		comment = u8(msg.comment());
 		if (uSource != pDstServerUser) {
-			if (! hasPermission(uSource, root, ChanACL::ResetComment)) {
+			if (! hasPermission(uSource, root, ChanACL::ResetComment) && ! hasPermission(uSource, root, ChanACL::MoveAndModifyCommentAndAvatar)) {
 				PERM_DENIED(uSource, root, ChanACL::ResetComment);
+				PERM_DENIED(uSource, root, ChanACL::MoveAndModifyCommentAndAvatar);
 				return;
 			}
 			if (comment.length() > 0) {
@@ -572,8 +573,9 @@ void Server::msgUserState(ServerUser *uSource, MumbleProto::UserState &msg) {
 			return;
 		}
 		if (uSource != pDstServerUser) {
-			if (! hasPermission(uSource, root, ChanACL::ResetTexture)) {
+			if (! hasPermission(uSource, root, ChanACL::ResetTexture) && ! hasPermission(uSource, root, ChanACL::MoveAndModifyCommentAndAvatar)) {
 				PERM_DENIED(uSource, root, ChanACL::ResetTexture);
+				PERM_DENIED(uSource, root, ChanACL::MoveAndModifyCommentAndAvatar);
 				return;
 			}
 			if (msg.texture().length() > 0) {

@@ -25,12 +25,13 @@ class ChanACL : public QObject {
 			Enter = 0x4,
 			Speak = 0x8,
 			MuteDeafen = 0x10,
-			Move = 0x20,
+			MoveAndModifyCommentAndAvatar = 0x20,
 			MakeChannel = 0x40,
 			LinkChannel = 0x80,
 			Whisper = 0x100,
 			TextMessage = 0x200,
 			MakeTempChannel = 0x400,
+			Move = 0x800,
 
 			// Root channel only
 			Kick = 0x10000,
@@ -41,7 +42,7 @@ class ChanACL : public QObject {
 			ResetTexture = 0x200000,
 
 			Cached = 0x8000000,
-			All = 0x3f07ff
+			All = 0x3f0fff
 		};
 
 		Q_DECLARE_FLAGS(Permissions, Perm)

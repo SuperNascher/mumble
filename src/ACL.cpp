@@ -119,7 +119,7 @@ QFlags<ChanACL::Perm> ChanACL::effectivePermissions(ServerUser *p, Channel *chan
 	}
 
 	if (granted & Write) {
-		granted |= Traverse|Enter|MuteDeafen|Move|MakeChannel|LinkChannel|TextMessage|MakeTempChannel;
+		granted |= Traverse|Enter|MuteDeafen|Move|MoveAndModifyCommentAndAvatar|MakeChannel|LinkChannel|TextMessage|MakeTempChannel;
 		if (chan->iId == 0)
 			granted |= Kick|Ban|ResetComment|ResetTexture|Register|SelfRegister;
 	}
@@ -162,8 +162,13 @@ QString ChanACL::whatsThis(Perm p) {
 			return tr("This represents the permission to mute and deafen other users. Once muted, a user will stay muted "
 			          "until he is unmuted by another privileged user or reconnects to the server.");
 		case Move:
-			return tr("This represents the permission to move a user to another channel or kick him from the server. To actually "
-			          "move the user, either the moving user must have Move privileges in the destination channel, or "
+                        return tr("This represents the permission to move a user to another channel or kick him from the server. To actually "
+                                  "move the user, either the moving user must have Move privileges in the destination channel, or "
+                                  "the user must normally be allowed to enter the channel. Users with this privilege can move users "
+                                  "into channels the target user normally wouldn't have permission to enter.");
+		case MoveAndModifyCommentAndAvatar:
+			return tr("This represents the permission to move a user to another channel,kick him from the server and reset his comment or profile picture. "
+				  "To actually move the user, either the moving user must have Move privileges in the destination channel, or "
 			          "the user must normally be allowed to enter the channel. Users with this privilege can move users "
 			          "into channels the target user normally wouldn't have permission to enter.");
 		case MakeChannel:
@@ -225,6 +230,8 @@ QString ChanACL::permName(Perm p) {
 			return tr("Mute/Deafen");
 		case Move:
 			return tr("Move");
+		case MoveAndModifyCommentAndAvatar:
+			return tr("Move and reset");
 		case MakeChannel:
 			return tr("Make channel");
 		case MakeTempChannel:
