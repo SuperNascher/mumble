@@ -896,6 +896,14 @@ void Server::msgChannelState(ServerUser *uSource, MumbleProto::ChannelState &msg
 		if (! p || qsName.isNull())
 			return;
 
+		if (uSource->uiVersion < 0x010300) {
+			MumbleProto::PermissionDenied mppd;
+			mppd.set_type(MumbleProto::PermissionDenied_DenyType_MumbleVersion);
+			mppd.set_reason(u8(tr("Your Mumble client is too old. Please update it")));
+			sendMessage(uSource, mppd);
+			return;
+		}
+
 		ChanACL::Perm perm = msg.temporary() ? ChanACL::MakeTempChannel : ChanACL::MakeChannel;
 		if (! hasPermission(uSource, p, perm)) {
 			PERM_DENIED(uSource, p, perm);
@@ -1230,6 +1238,14 @@ void Server::msgACL(ServerUser *uSource, MumbleProto::ACL &msg) {
 	Channel *c = qhChannels.value(msg.channel_id());
 	if (!c)
 		return;
+
+	if (uSource->uiVersion < 0x010300) {
+		MumbleProto::PermissionDenied mppd;
+		mppd.set_type(MumbleProto::PermissionDenied_DenyType_MumbleVersion);
+		mppd.set_reason(u8(tr("Your Mumble client is too old. Please update it")));
+		sendMessage(uSource, mppd);
+		return;
+	}
 
 	if (! hasPermission(uSource, c, ChanACL::Write) && !(c->cParent && hasPermission(uSource, c->cParent, ChanACL::Write))) {
 		PERM_DENIED(uSource, c, ChanACL::Write);

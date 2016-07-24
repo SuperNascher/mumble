@@ -279,6 +279,7 @@ message PermissionDenied {
 		// Channel is full.
 		ChannelFull = 9;
 		NestingLimit = 10;
+		MumbleVersion = 11;
 	}
 	// The denied permission when type is Permission.
 	optional uint32 permission = 1;
