@@ -105,11 +105,11 @@ enum PermissionDenied_DenyType {
   PermissionDenied_DenyType_UserName = 8,
   PermissionDenied_DenyType_ChannelFull = 9,
   PermissionDenied_DenyType_NestingLimit = 10,
-  PermissionDenied_DenyType_MumbleVersion = 11
+  PermissionDenied_DenyType_OldMumbleVersion = 11
 };
 bool PermissionDenied_DenyType_IsValid(int value);
 const PermissionDenied_DenyType PermissionDenied_DenyType_DenyType_MIN = PermissionDenied_DenyType_Text;
-const PermissionDenied_DenyType PermissionDenied_DenyType_DenyType_MAX = PermissionDenied_DenyType_MumbleVersion;
+const PermissionDenied_DenyType PermissionDenied_DenyType_DenyType_MAX = PermissionDenied_DenyType_OldMumbleVersion;
 const int PermissionDenied_DenyType_DenyType_ARRAYSIZE = PermissionDenied_DenyType_DenyType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* PermissionDenied_DenyType_descriptor();
@@ -2077,7 +2077,7 @@ class PermissionDenied : public ::google::protobuf::Message {
   static const DenyType UserName = PermissionDenied_DenyType_UserName;
   static const DenyType ChannelFull = PermissionDenied_DenyType_ChannelFull;
   static const DenyType NestingLimit = PermissionDenied_DenyType_NestingLimit;
-  static const DenyType MumbleVersion = PermissionDenied_DenyType_MumbleVersion;
+  static const DenyType OldMumbleVersion = PermissionDenied_DenyType_OldMumbleVersion;
   static inline bool DenyType_IsValid(int value) {
     return PermissionDenied_DenyType_IsValid(value);
   }

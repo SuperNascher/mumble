@@ -897,10 +897,7 @@ void Server::msgChannelState(ServerUser *uSource, MumbleProto::ChannelState &msg
 			return;
 
 		if (uSource->uiVersion < 0x010300) {
-			MumbleProto::PermissionDenied mppd;
-			mppd.set_type(MumbleProto::PermissionDenied_DenyType_MumbleVersion);
-			mppd.set_reason(u8(tr("Your Mumble client is too old. Please update it")));
-			sendMessage(uSource, mppd);
+			PERM_DENIED_FALLBACK(OldMumbleVersion, 0x010300, QLatin1String("Your Mumble client is too old"));	
 			return;
 		}
 
@@ -1240,10 +1237,7 @@ void Server::msgACL(ServerUser *uSource, MumbleProto::ACL &msg) {
 		return;
 
 	if (uSource->uiVersion < 0x010300) {
-		MumbleProto::PermissionDenied mppd;
-		mppd.set_type(MumbleProto::PermissionDenied_DenyType_MumbleVersion);
-		mppd.set_reason(u8(tr("Your Mumble client is too old. Please update it")));
-		sendMessage(uSource, mppd);
+		PERM_DENIED_FALLBACK(OldMumbleVersion, 0x010300, QLatin1String("Your Mumble client is too old"));
 		return;
 	}
 

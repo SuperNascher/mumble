@@ -241,8 +241,8 @@ void MainWindow::msgPermissionDenied(const MumbleProto::PermissionDenied &msg) {
 				g.l->log(Log::PermissionDenied, tr("Channel nesting limit reached."));
 			}
 			break;
-		case MumbleProto::PermissionDenied_DenyType_MumbleVersion: {
-				g.l->log(Log::PermissionDenied, tr("Your Mumble client is too old. Please update it."));
+		case MumbleProto::PermissionDenied_DenyType_OldMumbleVersion: {
+				g.l->log(Log::PermissionDenied, tr("Your Mumble client is too old."));
             }
             break;
 		default: {
