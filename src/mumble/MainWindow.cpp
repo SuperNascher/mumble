@@ -45,6 +45,8 @@
 #include "Themes.h"
 #include "SSLCipherInfo.h"
 
+#include <QDebug>
+
 #ifdef Q_OS_WIN
 #include "TaskList.h"
 #endif
@@ -1956,10 +1958,24 @@ void MainWindow::qmChannel_aboutToShow() {
 }
 
 void MainWindow::on_qaAddServerFavorite_triggered() {
-	ConnectDialog *cd = new ConnectDialog(this, true);
-	cd->qaFavoriteAddCurrentServer->triggered(true);
-	cd->exec();
-	delete cd;
+	QString host, user, pw, name;
+	unsigned short port;
+	g.sh->getConnectionInfo(host, port, user, pw);
+	Channel *c = Channel::get(0);
+	if (c) {
+		if (c->qsName != QLatin1String("Root"))
+			name = c->qsName;
+	}
+
+	ConnectDialogEdit *cde = new ConnectDialogEdit(this, name, host, user, port, pw, true);
+	int res = cde->exec();
+
+	if (res == QDialog::Accepted) {
+		ServerItem *favoriteServer = new ServerItem(cde->qsName, cde->qsHostname, cde->usPort, cde->qsUsername, cde->qsPassword);
+		QList<FavoriteServer> ql = Database::getFavorites();
+		ql << favoriteServer->toFavoriteServer();
+		Database::setFavorites(ql);
+	}
 }
 
 void MainWindow::on_qaChannelJoin_triggered() {

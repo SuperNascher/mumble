@@ -822,7 +822,7 @@ ConnectDialog::ConnectDialog(QWidget *p, bool autoconnect) : QDialog(p), bAutoCo
 	qdbbButtonBox->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
 
 	QPushButton *qpbAddCurrentServer = new QPushButton(tr("&Add Current..."), this);
-	if(!g.sh)
+	if(!g.sh || !g.sh->isRunning())
 		qpbAddCurrentServer->setEnabled(false);
 	qpbAddCurrentServer->setDefault(false);
 	qpbAddCurrentServer->setAutoDefault(false);
@@ -1071,31 +1071,18 @@ void ConnectDialog::on_qaFavoriteAddNew_triggered() {
 	unsigned short port = DEFAULT_MUMBLE_PORT;
 
 	// Try to fill out fields if possible
-	{
-		ServerItem *si = ServerItem::fromMimeData(QApplication::clipboard()->mimeData(), false);
-		if (si) {
-			// If there is server information in the clipboard assume user wants to add it
-			name = si->qsName;
+	ServerItem *si = ServerItem::fromMimeData(QApplication::clipboard()->mimeData(), false);
+	if (si) {
+		// If there is server information in the clipboard assume user wants to add it
+		name = si->qsName;
 
-			if (! si->qsBonjourHost.isEmpty())
-				host = QLatin1Char('@') + si->qsBonjourHost;
-			else
-				host = si->qsHostname;
+		if (! si->qsBonjourHost.isEmpty())
+			host = QLatin1Char('@') + si->qsBonjourHost;
+		else
+			host = si->qsHostname;
 
-			port = si->usPort;
-			pw = si->qsPassword;
-		} else {
-			// If connected to a server assume the user wants to add it
-			if (g.sh && g.sh->isRunning()) {
-				g.sh->getConnectionInfo(host, port, user, pw);
-				Channel *c = Channel::get(0);
-				if (c) {
-					if (c->qsName != QLatin1String("Root"))
-						name = c->qsName;
-				}
-			} else
-				user = g.s.qsUsername;
-		}
+		port = si->usPort;
+		pw = si->qsPassword;
 	}
 
 	ConnectDialogEdit *cde = new ConnectDialogEdit(this, name, host, user, port, pw, true);
