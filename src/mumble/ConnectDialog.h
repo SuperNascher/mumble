@@ -277,6 +277,7 @@ class ConnectDialog : public QDialog, public Ui::ConnectDialog {
 		void timeTick();
 
 		void on_qaFavoriteAdd_triggered();
+		void on_qaFavoriteAddCurrentServer_triggered();
 		void on_qaFavoriteAddNew_triggered();
 		void on_qaFavoriteEdit_triggered();
 		void on_qaFavoriteRemove_triggered();

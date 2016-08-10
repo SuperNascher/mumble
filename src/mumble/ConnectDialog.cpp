@@ -821,6 +821,15 @@ ConnectDialog::ConnectDialog(QWidget *p, bool autoconnect) : QDialog(p), bAutoCo
 	qdbbButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	qdbbButtonBox->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
 
+	QPushButton *qpbAddCurrentServer = new QPushButton(tr("&Add Current..."), this);
+	if(!g.sh)
+		qpbAddCurrentServer->setEnabled(false);
+	qpbAddCurrentServer->setDefault(false);
+	qpbAddCurrentServer->setAutoDefault(false);
+	connect(qpbAddCurrentServer, SIGNAL(clicked()), qaFavoriteAddCurrentServer, SIGNAL(triggered()));
+	qdbbButtonBox->addButton(qpbAddCurrentServer, QDialogButtonBox::ActionRole);
+
+
 	QPushButton *qpbAdd = new QPushButton(tr("&Add New..."), this);
 	qpbAdd->setDefault(false);
 	qpbAdd->setAutoDefault(false);
@@ -1027,6 +1036,33 @@ void ConnectDialog::on_qaFavoriteAdd_triggered() {
 	qtwServers->siFavorite->addServerItem(si);
 	qtwServers->setCurrentItem(si);
 	startDns(si);
+}
+
+void ConnectDialog::on_qaFavoriteAddCurrentServer_triggered() {
+	QString host, user, pw;
+	QString name;
+	unsigned short port;
+
+	if (g.sh && g.sh->isRunning()) {
+		g.sh->getConnectionInfo(host, port, user, pw);
+		Channel *c = Channel::get(0);
+		if (c) {
+			if (c->qsName != QLatin1String("Root"))
+				name = c->qsName;
+		}
+	} else
+		user = g.s.qsUsername;
+
+	ConnectDialogEdit *cde = new ConnectDialogEdit(this, name, host, user, port, pw, true);
+
+	if (cde->exec() == QDialog::Accepted) {
+		ServerItem *si = new ServerItem(cde->qsName, cde->qsHostname, cde->usPort, cde->qsUsername, cde->qsPassword);
+		qlItems << si;
+		qtwServers->siFavorite->addServerItem(si);
+		qtwServers->setCurrentItem(si);
+		startDns(si);
+	}
+	delete cde;
 }
 
 void ConnectDialog::on_qaFavoriteAddNew_triggered() {

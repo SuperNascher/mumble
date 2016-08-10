@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>671</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="qmConfig">
@@ -885,6 +885,14 @@ the channel's context menu.</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="qaAddServerFavorite">
+   <property name="text">
+    <string>&amp;Add this Server</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this Server as favorite in the connecton menu.</string>
    </property>
   </action>
  </widget>

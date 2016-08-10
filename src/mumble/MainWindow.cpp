@@ -1892,10 +1892,14 @@ void MainWindow::qmChannel_aboutToShow() {
 	qmChannel->addAction(qaChannelCopyURL);
 	qmChannel->addAction(qaChannelSendMessage);
 
-	// hiding the root is nonsense
+
 	if(c && c->cParent) {
+		// hiding the root is nonsense
 		qmChannel->addSeparator();
 		qmChannel->addAction(qaChannelFilter);
+	} else if (c && !c->cParent) {
+		qmChannel->addSeparator();
+		qmChannel->addAction(qaAddServerFavorite);
 	}
 
 #ifndef Q_OS_MAC
@@ -1949,6 +1953,13 @@ void MainWindow::qmChannel_aboutToShow() {
 	qaChannelUnlinkAll->setEnabled(unlinkall);
 	qaChannelSendMessage->setEnabled(msg);
 	updateMenuPermissions();
+}
+
+void MainWindow::on_qaAddServerFavorite_triggered() {
+	ConnectDialog *cd = new ConnectDialog(this, true);
+	cd->qaFavoriteAddCurrentServer->triggered(true);
+	cd->exec();
+	delete cd;
 }
 
 void MainWindow::on_qaChannelJoin_triggered() {

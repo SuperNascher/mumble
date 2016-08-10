@@ -151,6 +151,14 @@
     <string>Paste favorite from clipboard</string>
    </property>
   </action>
+  <action name="qaFavoriteAddCurrentServer">
+   <property name="text">
+    <string>Add to &amp;Favorites</string>
+   </property>
+   <property name="toolTip">
+    <string>Add the current Server to the Favorites</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
